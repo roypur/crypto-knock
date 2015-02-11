@@ -1,0 +1,24 @@
+{
+    "name": "Crypto-Knock",
+    "description": "A new type of port-knocker",
+    "version": "0.3.1",
+    "manifest_version": 2,
+    "app":
+    {
+        "background":
+        {
+            "scripts":["lib/draw.js"]
+        }
+    },
+    "icons":{"128":"128.png"},
+    "sockets":
+    {
+        "udp":
+        {
+            "bind":"*:*",
+            "send":"*:*"
+        }
+    },
+    "permissions":["https://icanhazip.com/"]
+}
+

@@ -1,0 +1,26 @@
+#input{
+    position:relative;
+    height:500px;
+    width:300px;
+    margin-left:auto;
+    margin-right:auto;
+}
+.line{
+    position:relative;
+    height:50px;
+    width:300px;
+}
+.left{
+    position:absolute;
+    width:150px;
+}
+.right{
+    position:absolute;
+    width:100px;
+    left:150px;
+}
+input{
+    text-align:center;
+    width:150px;
+}
+
