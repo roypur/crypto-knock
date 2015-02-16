@@ -1,21 +1,33 @@
 <html>
-    <header>
+    <head>
         <meta charset=UTF-8"></meta>
         <title>Crypto-Knock</title>
-        <script src='lib/send.js'></script>
+        
         <script src='lib/sha512.js'></script>
         <script src='lib/encode.js'></script>
         <script src='lib/picoModal.js'></script>
         <script src='lib/jquery.js'></script>
-        <script src='make.js'></script> 
-        <link rel='stylesheet' type='text/css' href='lib/style.css'></link>
+        <script src='assets/send.js'></script>
+        <script src='assets/fav.js'></script>
+        <script src='make.js'></script>
         
-    </header>
+        
+        <link rel='stylesheet' type='text/css' href='assets/style.css'></link>
+        
+    </head>
     <body>
         <div id='input'>
             <div class='line'>
             </div><!--end line-->
-
+            
+            <div class='line'>
+                <div class='right'>
+                    <select id='fav'>
+                    </select>
+                </div><!--end right-->
+            
+            </div><!--end line-->
+            
             <div class='line'>
                 <div class='left'>
                     <b>Remote Address</b>
@@ -52,14 +64,23 @@
                 </div><!--end right-->
             </div><!--end line-->                 
                 
-            <div class='line'>    
-                <input type='button' id='open' value='open firewall'></input>
+            <div class='line'>
+                <div class='right'>
+                    <input type='button' id='open' value='open firewall'></input>
+                </div><!--end right-->
             </div><!--end line-->
             
             <div class='line'>
-                <input type='button' id='close' value='close firewall'></input>
+                <div class='right'>
+                    <input type='button' id='close' value='close firewall'></input>
+                </div><!--end right-->
             </div><!--end line-->
             
+            <div class='line'>
+                <div class='right'>
+                    <input type='button' id='openSettings' value='Settings'></input>
+                </div><!--end right-->
+            </div><!--end line-->
         </div><!--end input-->
         
         

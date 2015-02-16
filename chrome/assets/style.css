@@ -23,4 +23,11 @@ input{
     text-align:center;
     width:150px;
 }
+select{
+    text-align:center;
+    width:150px;
+}
+body{
+    margin:0px;
+}
 

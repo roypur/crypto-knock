@@ -38,11 +38,23 @@ document.addEventListener('DOMContentLoaded', function()
         }
     }
     
+    $("#openSettings").click(function()
+    {
+        chrome.app.window.create('settings.html',
+        {
+            'bounds':
+            {
+                'width': 900,
+                'height': 400
+            }
+        });
+    });
+    
+    
     function makePackage(remote, port, local, state, key)
     {
 
         var message = local + state;
-    console.log("continue");
         var shaObj = new jsSHA(message, "TEXT");
         var sig = shaObj.getHMAC(key, "TEXT", "SHA-512", "HEX", "UTF8");
     
