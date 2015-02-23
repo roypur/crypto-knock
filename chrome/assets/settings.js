@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function()
 });
 
 
-
 function makeMenu(id, data)
 {  
     if(id == "new")
@@ -120,7 +119,7 @@ function setData(data, update, line)
     sortData(data);
     
     
-    chrome.storage.sync.set({"storage":data}, function()
+    chrome.storage.local.set({"storage":data}, function()
     {
         setTable();
         drawData(data);
@@ -136,7 +135,7 @@ function sortData(data) {
 
 function modify(update, line)
 {
-    chrome.storage.sync.get(null, function(items)
+    chrome.storage.local.get(null, function(items)
     {
         if(update == undefined)
         {
