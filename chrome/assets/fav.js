@@ -1,31 +1,54 @@
 makeSpace();
 
-document.addEventListener('DOMContentLoaded', function()
+var loaded = false;
+var init = false;
+
+$(document).ready(function()
 {
-    list()
+    loaded = true;
+    
+    if(init)
+    {
+        afterSpace();
+    }
+});
+
+$(document).on("init", function()
+{
+    init = true;
+    
+    if(loaded)
+    {
+        afterSpace();
+    }
+});
+
+function afterSpace(handler)
+{
+    list();
     
     $("#fav").change(function()
     {
         paste();
     });
-
-});
+}
 
 chrome.storage.onChanged.addListener(function()
 {
     list();
 });
 
-
-
 function list()
 {
     chrome.storage.local.get(null, function(items)
     {
         window.data = items.storage;
+        
+        var length = window.data.length;
+        
         $("#fav").html("<option value='empty'></option>");
         
-        for(var i = 0; i<window.data.length; i++)
+        for(var i = 0; i < length; i++)
         {
             $("#fav").append("<option value='" + i + "' + class='dropDown'>" + window.data[i]["name"] + "</option>");
         };
@@ -36,9 +59,10 @@ function list()
 function paste()
 {
     var line = $("#fav").val();
-    
+
     if(line != "empty")
     {
+    
         $("#remote").val(window.data[line]["remote"]);
         $("#key").val(window.data[line]["key"]);
         $("#port").val(window.data[line]["port"]);
@@ -52,8 +76,17 @@ function makeSpace()
     {
         if(bytes == 0)
         {
-            var data = [];
-            chrome.storage.local.set({"storage":data}, function(){});
+            var set = [];
+            chrome.storage.local.set({"storage":set}, function(){});
+            
+            
+            $.event.trigger(
+            {
+	            type: "init",
+	            message: "",
+	            time: new Date()
+            });
+            
         }
     
     });
