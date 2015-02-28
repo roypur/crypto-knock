@@ -6,7 +6,7 @@ var init = false;
 $(document).ready(function()
 {
     loaded = true;
-    
+
     if(init)
     {
         afterSpace();
@@ -16,14 +16,19 @@ $(document).ready(function()
 $(document).on("init", function()
 {
     init = true;
-    
+
     if(loaded)
     {
         afterSpace();
     }
 });
 
-function afterSpace(handler)
+chrome.storage.onChanged.addListener(function()
+{
+    list();
+});
+
+function afterSpace()
 {
     list();
     
@@ -32,11 +37,6 @@ function afterSpace(handler)
         paste();
     });
 }
-
-chrome.storage.onChanged.addListener(function()
-{
-    list();
-});
 
 function list()
 {
@@ -69,7 +69,6 @@ function paste()
     }
 }
 
-
 function makeSpace()
 {
     chrome.storage.local.getBytesInUse(null, function(bytes)
@@ -77,17 +76,22 @@ function makeSpace()
         if(bytes == 0)
         {
             var set = [];
-            chrome.storage.local.set({"storage":set}, function(){});
-            
-            
-            $.event.trigger(
-            {
-	            type: "init",
-	            message: "",
-	            time: new Date()
-            });
-            
+            chrome.storage.local.set({"storage":set}, endSpace);
+        }
+        else
+        {
+            endSpace();
         }
     
+    });
+}
+
+function endSpace()
+{
+    $.event.trigger(
+    {
+	    type: "init",
+	    message: "",
+	    time: new Date()
     });
 }
