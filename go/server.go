@@ -9,13 +9,13 @@ import (
 )
 
 var port string = ":5005";
-
+/*
 type Message struct{
     ip string `json:"ip"`
     signature string `json:"signature"`
     state string `json:"state"`
     }
-
+*/
 
 
 /* A Simple function to verify error */
@@ -39,24 +39,20 @@ func main() {
     buf := make([]byte, 512);
 
     for {
-        n,addr,err := ServerConn.ReadFromUDP(buf);
+        _,addr,err := ServerConn.ReadFromUDP(buf);
         
+        //Remove null values after string
         buf = bytes.SplitAfter(buf, []byte("}"))[0];
-
-        fmt.Println(n);
         
         if(buf != nil){
-            var m Message;
-             
-             fmt.Println(err);
-             fmt.Println(buf);
-             
-             if err := json.Unmarshal(buf, &m); err != nil{
-                panic(err);
-             }
+            m := make(map[string]string);
             
-            fmt.Println("\n");
-            fmt.Println(m.ip);
+            err := json.Unmarshal(buf, &m);
+            if err != nil{
+                panic(err);
+            }
+
+            fmt.Println(m["ip"]);
         }
         
         if err != nil {
