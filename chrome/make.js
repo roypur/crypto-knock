@@ -6,27 +6,27 @@ window.addEventListener('error (window)', function()
 
 document.addEventListener('DOMContentLoaded', function()
 {
-    document.getElementById("open").addEventListener("mousedown", function()
+    $("#open").click(function()
     {
         getInput("open");
-    })
+    });
     
-    document.getElementById("close").addEventListener("mousedown", function()
+    $("#close").click(function()
     {
         getInput("close");
-    })
+    });
     
-    $.get("https://icanhazip.com", function(data)
+    getIP(function(ip)
     {
-        document.getElementById("local").value = data;
+        $("#local").val(ip);
     });
     
     function getInput(state)
     {
-        var remote = document.getElementById("remote").value;
-        var port = parseInt(document.getElementById("port").value, 10);
-        var local = document.getElementById("local").value;
-        var key = document.getElementById("key").value;
+        var remote = $("#remote").val();
+        var port = parseInt($("#port").val(), 10);
+        var local = $("#local").val();
+        var key = $("#key").val();
         
         if(remote != "" && port != "" && local != "" && !isNaN(port))
         {

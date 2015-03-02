@@ -1,8 +1,26 @@
 makeSpace();
 
-document.addEventListener('DOMContentLoaded', function()
+var loaded = false;
+var init = false;
+
+$(document).ready(function()
 {
-    list();
+    loaded = true;
+
+    if(init)
+    {
+        afterSpace();
+    }
+});
+
+$(document).on("init", function()
+{
+    init = true;
+
+    if(loaded)
+    {
+        afterSpace();
+    }
 });
 
 chrome.storage.onChanged.addListener(function()
@@ -10,42 +28,70 @@ chrome.storage.onChanged.addListener(function()
     list();
 });
 
+function afterSpace()
+{
+    list();
+    
+    $("#fav").change(function()
+    {
+        paste();
+    });
+}
+
 function list()
 {
-    chrome.storage.sync.get(null, function(items)
+    chrome.storage.local.get(null, function(items)
     {
-        var data = items.storage;
+        window.data = items.storage;
+        
+        var length = window.data.length;
+        
         $("#fav").html("<option value='empty'></option>");
         
-        for(var i = 0; i<data.length; i++)
+        for(var i = 0; i < length; i++)
         {
-            $("#fav").append("<option value='" + i + "' + class='dropDown'>" + data[i]["name"] + "</option>");
+            $("#fav").append("<option value='" + i + "' + class='dropDown'>" + window.data[i]["name"] + "</option>");
         };
-        
-        $("#fav").change(function()
-        {
-            var line = $("#fav").val();
-            
-            if(line != "empty")
-            {
-                $("#remote").val(data[line]["remote"]);
-                $("#key").val(data[line]["key"]);
-                $("#port").val(data[line]["port"]);
-            }
-        });
-    
+       
     });
+}
+
+function paste()
+{
+    var line = $("#fav").val();
+
+    if(line != "empty")
+    {
+    
+        $("#remote").val(window.data[line]["remote"]);
+        $("#key").val(window.data[line]["key"]);
+        $("#port").val(window.data[line]["port"]);
+    }
 }
 
 function makeSpace()
 {
-    chrome.storage.sync.getBytesInUse(null, function(bytes)
+    chrome.storage.local.getBytesInUse(null, function(bytes)
     {
         if(bytes == 0)
         {
-            var data = [];
-            chrome.storage.sync.set({"storage":data}, function(){});
+            var set = [];
+            chrome.storage.local.set({"storage":set}, endSpace);
+        }
+        else
+        {
+            endSpace();
         }
     
+    });
+}
+
+function endSpace()
+{
+    $.event.trigger(
+    {
+	    type: "init",
+	    message: "",
+	    time: new Date()
     });
 }
