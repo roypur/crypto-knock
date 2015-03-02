@@ -1,61 +1,66 @@
 package main
-import "net"
+ 
+import (
+    "fmt"
+    "net"
+    "os"
+    "encoding/json"
+    "bytes"
+)
 
-var address = "0.0.0.0"
-var port = 5005
+var port string = ":5005";
 
-var key = "kjhnbskdfghntg"
-
-
-func main() {
-    addr := net.UDPAddr{
-        Port: port,
-        IP: net.ParseIP("0.0.0.0"),
-    }
-    conn, err := net.ListenUDP("udp", &addr)
-    defer conn.Close()
-    if err != nil{
-        panic(err)
+type Message struct{
+    ip string `json:"ip"`
+    signature string `json:"signature"`
+    state string `json:"state"`
     }
 
-    // Do something with `conn`
+
+
+/* A Simple function to verify error */
+func CheckError(err error) {
+    if err  != nil {
+        fmt.Println("Error: " , err)
+        os.Exit(0)
+    }
 }
+ 
+func main() {
+    /* Lets prepare a address at any address at port 10001*/   
+    ServerAddr,err := net.ResolveUDPAddr("udp", port)
+    CheckError(err)
+ 
+    /* Now listen at selected port */
+    ServerConn, err := net.ListenUDP("udp", ServerAddr)
+    CheckError(err)
+    defer ServerConn.Close()
 
-/*
-def udpServer():
+    buf := make([]byte, 512);
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((address, port))
-
-    while True:
-        try:
-            data = sock.recv(256)
-            try:
-                content = json.loads(data.decode("utf-8"))
-            
-                checkSum = hmac.new(key.encode("utf-8"), content['ip'].encode("utf-8") + content['state'].encode('utf-8'), 'sha512')
-            
-                signature = checkSum.hexdigest()
-            
-                success = hmac.compare_digest(signature, content['signature'])
-    
-                if success:
-                    print("success", content['ip'])
-                    try:
-                        
-                        if content['state'] == "open":
-                            addIP(content['ip'])
-                        elif content['state'] == "close":
-                            removeIP(content['ip'])
-                            
-                    except Exception as e:
-                        print(str(e))
-            except:
-                print("invalid package")
+    for {
+        n,addr,err := ServerConn.ReadFromUDP(buf);
         
-        except:
-            print("\n")
-            exit()
+        buf = bytes.SplitAfter(buf, []byte("}"))[0];
 
-udpServer()
-*/
+        fmt.Println(n);
+        
+        if(buf != nil){
+            var m Message;
+             
+             fmt.Println(err);
+             fmt.Println(buf);
+             
+             if err := json.Unmarshal(buf, &m); err != nil{
+                panic(err);
+             }
+            
+            fmt.Println("\n");
+            fmt.Println(m.ip);
+        }
+        
+        if err != nil {
+            fmt.Println("Error: ",err, addr)
+        }
+    }
+}
