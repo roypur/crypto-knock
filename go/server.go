@@ -106,13 +106,13 @@ func val(incomming map[string]string){
     }
 }
 
-//if ip in iptables => return false
-//else => return true
+//if ip in iptables => return true
+//else => return false
 
 func testIp(ip string)(bool){
     cmd := exec.Command("iptables", "-C", chain, "-s", ip, "-j", "ACCEPT");
     err := cmd.Run();
-    if(err != nil){
+    if(err == nil){
         return false;
     }else{
         return true;
@@ -120,7 +120,7 @@ func testIp(ip string)(bool){
 }
 
 func openIp(ip string){
-    if(!testIp(ip)){
+    if(testIp(ip)){
         cmd := exec.Command("iptables", "-I", chain, "-s", ip, "-j", "ACCEPT");
         err := cmd.Run();
         checkError(err);
@@ -129,7 +129,7 @@ func openIp(ip string){
 }
 
 func closeIp(ip string){
-    for(testIp(ip)){
+    for(!testIp(ip)){
         cmd := exec.Command("iptables", "-D", chain, "-s", ip, "-j", "ACCEPT");
         err := cmd.Run();
         checkError(err);
