@@ -15,7 +15,7 @@ import (
 var key string;
 var listen string;
 
-time:= make(map[string]int);
+//time := make(map[string]int);
 
 
 /* A Simple function to verify error */
@@ -25,7 +25,7 @@ func checkError(err error) {
     }
 }
 
-func parseConfig()(string, string){
+func parseConfig(){
 
     file, err := ioutil.ReadFile("config.json");
     
@@ -37,16 +37,15 @@ func parseConfig()(string, string){
     
     checkError(err);
     
-    var listen string = config["listen"];
-    var key string = config["key"];
+    listen = config["listen"];
+    key = config["key"];
     
     fmt.Println("Listening on " + listen + "\n")
-    
-    return listen, key;
+
 }
 
 func main(){
-    listen, key := parseConfig();
+    parseConfig();
     server(listen, key);
 }
 
@@ -82,7 +81,7 @@ func server(listen, key string) {
 }
 
 func val(incomming map[string]string){
-    
+
     inSum,_ := hex.DecodeString(incomming["signature"]);
     
     value := []byte(incomming["ip"] + incomming["state"]);
@@ -92,23 +91,44 @@ func val(incomming map[string]string){
     
     newSum := mac.Sum(nil);
     
-    openIp(incomming["ip"]);
-    
     if(hmac.Equal(newSum, inSum)){
-        fmt.Println("true");    
+
+        if(incomming["state"] == "open"){
+            openIp(incomming["ip"]);
+        }else if(incomming["state"] == "close"){
+            closeIp(incomming["ip"]);
+        }
+        
+        
     }
 }
 
-func timeOut(ip string){
-    time[]
+func testIp(ip string)(bool){
+    cmd := exec.Command("iptables", "-C", "INPUT", "-s", ip, "-m", "comment", "--comment", "port-knock", "-j", "ACCEPT");
+    err := cmd.Run();
+    if(err != nil){
+        return false;
+    }else{
+        return true;
+    }
 }
-
-
-
-
 
 func openIp(ip string){
-    cmd := exec.Command("date");
-    var err error = cmd.Run();
-    checkError(err);
+    if(!testIp(ip)){
+        cmd := exec.Command("iptables", "-I", "INPUT", "-s", ip, "-m", "comment", "--comment", "port-knock", "-j", "ACCEPT");
+        err := cmd.Run();
+        checkError(err);
+    }
+    
 }
+
+func closeIp(ip string){
+    for(testIp(ip)){
+        cmd := exec.Command("iptables", "-D", "INPUT", "-s", ip, "-m", "comment", "--comment", "port-knock", "-j", "ACCEPT");
+        err := cmd.Run();
+        checkError(err);
+    }
+}
+
+
+

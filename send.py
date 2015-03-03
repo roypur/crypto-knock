@@ -5,7 +5,7 @@ import hmac
 
 
 ip = "127.0.0.1"
-state = "close"
+state = "open"
 
 
 key = "kjhnbskdfghntg"
