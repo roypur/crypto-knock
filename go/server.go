@@ -3,60 +3,112 @@ package main
 import (
     "fmt"
     "net"
-    "os"
+    "io/ioutil"
     "encoding/json"
     "bytes"
+    "crypto/hmac"
+    "crypto/sha512"
+    "encoding/hex"
+    "os/exec"
 )
 
-var port string = ":5005";
-/*
-type Message struct{
-    ip string `json:"ip"`
-    signature string `json:"signature"`
-    state string `json:"state"`
-    }
-*/
+var key string;
+var listen string;
+
+time:= make(map[string]int);
 
 
 /* A Simple function to verify error */
-func CheckError(err error) {
+func checkError(err error) {
     if err  != nil {
-        fmt.Println("Error: " , err)
-        os.Exit(0)
+        fmt.Println("Error: " , err);
     }
 }
- 
-func main() {
-    /* Lets prepare a address at any address at port 10001*/   
-    ServerAddr,err := net.ResolveUDPAddr("udp", port)
-    CheckError(err)
+
+func parseConfig()(string, string){
+
+    file, err := ioutil.ReadFile("config.json");
+    
+    checkError(err);
+    
+    config := make(map[string]string);
+    
+    err = json.Unmarshal(file, &config);
+    
+    checkError(err);
+    
+    var listen string = config["listen"];
+    var key string = config["key"];
+    
+    fmt.Println("Listening on " + listen + "\n")
+    
+    return listen, key;
+}
+
+func main(){
+    listen, key := parseConfig();
+    server(listen, key);
+}
+
+func server(listen, key string) {
+    /* Lets prepare a address at any address at port 10001*/
+    ServerAddr,err := net.ResolveUDPAddr("udp", listen)
+    checkError(err)
  
     /* Now listen at selected port */
     ServerConn, err := net.ListenUDP("udp", ServerAddr)
-    CheckError(err)
+    checkError(err)
     defer ServerConn.Close()
 
     buf := make([]byte, 512);
 
     for {
-        _,addr,err := ServerConn.ReadFromUDP(buf);
+        _,_,err := ServerConn.ReadFromUDP(buf);
+        
+        checkError(err);
         
         //Remove null values after string
         buf = bytes.SplitAfter(buf, []byte("}"))[0];
         
         if(buf != nil){
-            m := make(map[string]string);
+            incomming := make(map[string]string);
+            err := json.Unmarshal(buf, &incomming);
+            checkError(err);
+            val(incomming);
             
-            err := json.Unmarshal(buf, &m);
-            if err != nil{
-                panic(err);
-            }
-
-            fmt.Println(m["ip"]);
         }
         
-        if err != nil {
-            fmt.Println("Error: ",err, addr)
-        }
     }
+}
+
+func val(incomming map[string]string){
+    
+    inSum,_ := hex.DecodeString(incomming["signature"]);
+    
+    value := []byte(incomming["ip"] + incomming["state"]);
+    
+    mac := hmac.New(sha512.New, []byte(key))
+    mac.Write(value);
+    
+    newSum := mac.Sum(nil);
+    
+    openIp(incomming["ip"]);
+    
+    if(hmac.Equal(newSum, inSum)){
+        fmt.Println("true");    
+    }
+}
+
+func timeOut(ip string){
+    time[]
+}
+
+
+
+
+
+func openIp(ip string){
+    cmd := exec.Command("date");
+    var err error = cmd.Run();
+    checkError(err);
 }

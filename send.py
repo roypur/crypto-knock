@@ -25,7 +25,10 @@ data['signature'] = signature
 
 message = json.dumps(data)
 
+print(message)
+
 packet = message.encode("utf-8")
+
 
 print("UDP target IP:", address)
 print("UDP target port:", port)
