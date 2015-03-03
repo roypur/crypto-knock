@@ -14,6 +14,7 @@ import (
 
 var key string;
 var listen string;
+var chain string;
 
 //time := make(map[string]int);
 
@@ -39,6 +40,7 @@ func parseConfig(){
     
     listen = config["listen"];
     key = config["key"];
+    chain = config["chain"];
     
     fmt.Println("Listening on " + listen + "\n")
 
@@ -46,6 +48,7 @@ func parseConfig(){
 
 func main(){
     parseConfig();
+    newChain();
     server(listen, key);
 }
 
@@ -103,8 +106,11 @@ func val(incomming map[string]string){
     }
 }
 
+//if ip in iptables => return false
+//else => return true
+
 func testIp(ip string)(bool){
-    cmd := exec.Command("iptables", "-C", "INPUT", "-s", ip, "-m", "comment", "--comment", "port-knock", "-j", "ACCEPT");
+    cmd := exec.Command("iptables", "-C", chain, "-s", ip, "-j", "ACCEPT");
     err := cmd.Run();
     if(err != nil){
         return false;
@@ -115,7 +121,7 @@ func testIp(ip string)(bool){
 
 func openIp(ip string){
     if(!testIp(ip)){
-        cmd := exec.Command("iptables", "-I", "INPUT", "-s", ip, "-m", "comment", "--comment", "port-knock", "-j", "ACCEPT");
+        cmd := exec.Command("iptables", "-I", chain, "-s", ip, "-j", "ACCEPT");
         err := cmd.Run();
         checkError(err);
     }
@@ -124,11 +130,21 @@ func openIp(ip string){
 
 func closeIp(ip string){
     for(testIp(ip)){
-        cmd := exec.Command("iptables", "-D", "INPUT", "-s", ip, "-m", "comment", "--comment", "port-knock", "-j", "ACCEPT");
+        cmd := exec.Command("iptables", "-D", chain, "-s", ip, "-j", "ACCEPT");
         err := cmd.Run();
         checkError(err);
     }
 }
 
+func newChain(){
+    cmd := exec.Command("iptables","-F",chain);
+    cmd.Run();
+    cmd = exec.Command("iptables","-X",chain);
+    cmd.Run();
+    cmd = exec.Command("iptables","-N",chain);
+    cmd.Run();
+    cmd = exec.Command("iptables","-A",chain,"-j","DROP");
+    cmd.Run();
+}
 
 
