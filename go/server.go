@@ -16,8 +16,6 @@ var key string;
 var listen string;
 var chain string;
 
-//time := make(map[string]int);
-
 
 /* A Simple function to verify error */
 func checkError(err error) {
@@ -53,35 +51,33 @@ func main(){
 }
 
 func server(listen, key string) {
-    /* Lets prepare a address at any address at port 10001*/
-    ServerAddr,err := net.ResolveUDPAddr("udp", listen)
-    checkError(err)
+    //Listen on selected ip and port
+    ServerAddr,err := net.ResolveUDPAddr("udp", listen);
+    checkError(err);
  
-    /* Now listen at selected port */
-    ServerConn, err := net.ListenUDP("udp", ServerAddr)
-    checkError(err)
-    defer ServerConn.Close()
+    //Now listen at selected port
+    ServerConn, err := net.ListenUDP("udp", ServerAddr);
+    checkError(err);
+    defer ServerConn.Close();
 
     buf := make([]byte, 512);
 
     for {
-        _,_,err := ServerConn.ReadFromUDP(buf);
-        
-        checkError(err);
-        
-        //Remove null values after string
-        buf = bytes.SplitAfter(buf, []byte("}"))[0];
-        
-        if(buf != nil){
-            incomming := make(map[string]string);
-            err := json.Unmarshal(buf, &incomming);
-            checkError(err);
-            val(incomming);
-            
-        }
-        
+        ServerConn.ReadFromUDP(buf);
+        go parseUDP(buf); 
     }
 }
+
+func parseUDP(buf []byte){
+    if(buf != nil){
+        //Remove null values after string
+        buf = bytes.SplitAfter(buf, []byte("}"))[0];
+        incomming := make(map[string]string);
+        json.Unmarshal(buf, &incomming);
+        val(incomming);
+    }
+}
+
 
 func val(incomming map[string]string){
 
