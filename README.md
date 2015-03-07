@@ -13,7 +13,7 @@ I recommend you use the go implementation of the server. it is more efficient an
 
 **sample config file**
 
-    /etc/CryptoKnock/config.json
+  **/etc/CryptoKnock/config.json**
     
     {
         "listen":":5005"
