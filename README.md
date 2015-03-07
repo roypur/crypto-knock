@@ -9,7 +9,7 @@ I recommend you use the go implementation of the server. it is more efficient an
     cd crypto-knock
     cd go
     go build server.go
-    sudo cp server /usr/bin/cryptoknock
+    sudo cp server /usr/bin/cryptoknockd
 
 
 **sample config file**
@@ -22,5 +22,10 @@ I recommend you use the go implementation of the server. it is more efficient an
         "key":"MyÜberSecretKey"
     }
 
+
+**run**
+
+    sudo cryptoknockd
+    sudo iptables -A INPUT -j chain-name
     
 <a href='https://chrome.google.com/webstore/detail/crypto-knock/opdobdojdhfbdmhpfnhihoigbfjbfddi'>Chrome app</a>

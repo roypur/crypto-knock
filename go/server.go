@@ -26,7 +26,7 @@ func checkError(err error) {
 
 func parseConfig(){
 
-    file, err := ioutil.ReadFile("config.json");
+    file, err := ioutil.ReadFile("/etc/CryptoKnock/config.json");
     
     checkError(err);
     
