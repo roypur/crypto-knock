@@ -4,6 +4,7 @@ An advanced "port knocker" sending signed udp packet instead of port number sequ
 I recommend you use the go implementation of the server. it is more efficient and uses a custom iptable-chain.
 
 **install**
+    
     git clone https://github.com/roypur/crypto-knock
     cd crypto-knock
     cd go
@@ -13,7 +14,7 @@ I recommend you use the go implementation of the server. it is more efficient an
 
 **sample config file**
 
-  **/etc/CryptoKnock/config.json**
+    **/etc/CryptoKnock/config.json**
     
     {
         "listen":":5005"
