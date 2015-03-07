@@ -14,14 +14,14 @@ I recommend you use the go implementation of the server. it is more efficient an
 
 **sample config file**
 
-    **/etc/CryptoKnock/config.json**
-    
+    /etc/CryptoKnock/config.json
+
+
     {
         "listen":":5005"
         "chain":"CryptoKnock"
         "key":"MyÜberSecretKey"
     }
-    
-The config file should be stored in /etc/CryptoKnock/config.json
+
     
 <a href='https://chrome.google.com/webstore/detail/crypto-knock/opdobdojdhfbdmhpfnhihoigbfjbfddi'>Chrome app</a>
