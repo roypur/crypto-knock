@@ -10,9 +10,10 @@ I recommend you use the go implementation of the server. it is more efficient an
     cd go
     go build server.go
     sudo cp server /usr/bin/cryptoknockd
+    sudo cp config.json /etc/CryptoKnock/config.json
 
 
-**sample config file**
+**sample config**
 
 */etc/CryptoKnock/config.json*
 

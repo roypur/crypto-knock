@@ -1,1 +1,5 @@
-{"listen":":5005", "key":"kjhnbskdfghntg", "chain":"CryptoKnock"}
+{
+    "listen":":5005",
+    "chain":"CryptoKnock",
+    "key":"MyÜberSecretKey"
+}
