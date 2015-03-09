@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "net"
+    "time"
     "io/ioutil"
     "encoding/json"
     "bytes"
@@ -10,12 +11,15 @@ import (
     "crypto/sha512"
     "encoding/hex"
     "os/exec"
+    "strconv"
 )
 
 var key string;
 var listen string;
 var chain string;
+var timeout int64;
 
+var ipTimer = make(map[string]int64);
 
 /* A Simple function to verify error */
 func checkError(err error) {
@@ -33,14 +37,19 @@ func parseConfig(){
     config := make(map[string]string);
     
     err = json.Unmarshal(file, &config);
-    
-    checkError(err);
-    
+
     listen = config["listen"];
     key = config["key"];
     chain = config["chain"];
     
-    fmt.Println("Listening on " + listen + "\n")
+    checkError(err);
+    
+    timeout,err = strconv.ParseInt(config["timeout"], 10, 64);
+    
+    if(err != nil){
+        timeout = 0;
+    }
+    fmt.Println("Listening on " + listen + "\n");
 
 }
 
@@ -94,6 +103,9 @@ func val(incomming map[string]string){
 
         if(incomming["state"] == "open"){
             openIp(incomming["ip"]);
+            if(timeout != 0){
+                expire(incomming["ip"]);
+            }
         }else if(incomming["state"] == "close"){
             closeIp(incomming["ip"]);
         }
@@ -101,6 +113,31 @@ func val(incomming map[string]string){
         
     }
 }
+
+
+
+func expire(ip string){
+
+    _, ok := ipTimer[ip];
+    
+    ipTimer[ip] = time.Now().Unix() + timeout;
+    
+    if !ok{
+        
+        var wait bool = true;
+            
+        for wait{
+            time.Sleep(time.Second);
+        
+            if(ipTimer[ip] < time.Now().Unix()){
+                closeIp(ip);
+                delete(ipTimer, ip);
+                wait = false;
+            }
+        }
+    }
+}
+
 
 //if ip in iptables => return true
 //else => return false
@@ -120,6 +157,7 @@ func openIp(ip string){
         cmd := exec.Command("iptables", "-I", chain, "-s", ip, "-j", "ACCEPT");
         err := cmd.Run();
         checkError(err);
+        
     }
     
 }

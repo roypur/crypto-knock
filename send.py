@@ -8,7 +8,7 @@ ip = "127.0.0.1"
 state = "open"
 
 
-key = "kjhnbskdfghntg"
+key = "MyÜberSecretKey"
 
 address = "127.0.0.1"
 port = 5005
